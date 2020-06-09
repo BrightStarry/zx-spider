@@ -78,6 +78,8 @@ public class QiDianAutoLikeSpider  {
         // 设置隐式等待时间
         if(qiDianAutoLikeSpiderProperties.getImplicitlyWaitTime() != null)
             driver.manage().timeouts().implicitlyWait(qiDianAutoLikeSpiderProperties.getImplicitlyWaitTime(), TimeUnit.MILLISECONDS);
+        // 设置脚本超时时间
+        driver.manage().timeouts().setScriptTimeout(qiDianAutoLikeSpiderProperties.getScriptTimeout(), TimeUnit.MILLISECONDS);
         // 设置默认的显示等待策略
         this.wait = new WebDriverWait(driver, 3, 100);
         return driver;
@@ -180,8 +182,12 @@ public class QiDianAutoLikeSpider  {
                 for (int i = 0; i < num / 20; i++) {
                     // 下拉滚动条
                     SpiderUtil.scroll2Bottom(driver,"getElementById(\"j-reviewWrapList\")");
-                    // 等待滚动条数据加载
-                    sleep(300);
+                    // 等待滚动条数据加载, 确保本章说数量大于当前滚动条加载后的数量后再继续
+//                    sleep(300);
+                    int finalI = i;
+                    wait.until(CustomExpectedConditions.elementsMatchingPresentInElement(
+                            By.cssSelector("#j-reviewWrapList > ul > .review-item"),
+                            items -> items.size() >= ((finalI * 20)+20)));
                 }
             }
             // 获取每个段落里的所有本章说
@@ -234,7 +240,12 @@ public class QiDianAutoLikeSpider  {
             if (num > 20) {
                 for (int i = 0; i < num / 20; i++) {
                     SpiderUtil.scroll2Bottom(driver,"getElementById(\"j-repliesListWrap\")");
-                    sleep(300);
+                    // 等待回复加载
+//                    sleep(300);
+                    int finalI = i;
+                    wait.until(CustomExpectedConditions.elementsMatchingPresentInElement(
+                            By.cssSelector("#j-repliesListWrap > .replies-ul > .review-wrap"),
+                            items -> items.size() >= ((finalI * 20) + 20)));
                 }
             }
 
@@ -254,7 +265,6 @@ public class QiDianAutoLikeSpider  {
                 if (!replyLikeButton.getAttribute("src").contains("d703b36c0eb8")) {
                     replyLikeButton.click();
                 }
-                sleep(50);
             }
             // 关闭 回复列表窗口
             driver.findElement(By.cssSelector(".iconfont.close-btn")).click();
@@ -288,7 +298,7 @@ public class QiDianAutoLikeSpider  {
                 WebElement bodyWrap = driver.findElement(By.id("bodyWrap"));
                 // 等待，此时需要手动验证
                 if (bodyWrap != null) {
-                    Thread.sleep(5000);
+                    sleep(5000);
                 }
             } catch (Exception ignored2) {
             }finally {

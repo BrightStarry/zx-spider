@@ -62,4 +62,10 @@ public class QiDianAutoLikeSpiderProperties {
      */
     private Long implicitlyWaitTime;
 
+    /**
+     * 全局 脚本超时时间,毫秒
+     * 为null时不设置隐式等待
+     */
+    private Long scriptTimeout;
+
 }

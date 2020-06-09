@@ -3,6 +3,7 @@ qidian:
     chrome-driver-exe-path: C:\code\chromedriver.exe
     chrome-user-data-path: C:\Users\97038\AppData\Local\Google\Chrome\User Data
     implicitly-wait-time: 5000
+    script_timeout: 5000
     username:
     password:
     novel-id:
